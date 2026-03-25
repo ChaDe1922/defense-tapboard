@@ -22,6 +22,7 @@ export default function LiveEntry() {
     managedPlayTypes,
     managedBlitzes,
     managedStunts,
+    managedOutcomes,
     selectedPresetId,
     selectedPlayType,
     selectedBlitz,
@@ -167,19 +168,6 @@ export default function LiveEntry() {
               ))}
             </div>
           </section>
-
-          {/* Optional Context Placeholder */}
-          <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-semibold text-slate-900 dark:text-slate-100 text-base">Optional context</div>
-                <div className="text-sm text-slate-500 dark:text-slate-400">Clock, down, distance, field zone, notes</div>
-              </div>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-slate-400">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </div>
-          </div>
 
           {/* Recent Plays — collapsible */}
           <section>
