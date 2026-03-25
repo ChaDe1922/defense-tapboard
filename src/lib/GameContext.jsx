@@ -692,7 +692,14 @@ export function GameProvider({ children }) {
       next = addPlayToDrive(next, activeSession.id, play.id, playNumber);
       if (advance) {
         next = updatePlayNumber(next, activeSession.id, playNumber + 1);
-        next = updateEntryState(next, activeSession.id, { selectedOutcome: null });
+        next = updateEntryState(next, activeSession.id, {
+          selectedPlayType: '',
+          selectedBlitz: '',
+          selectedLineStunt: '',
+          selectedOutcome: null,
+          selectedPresetId: null,
+          presetCustomized: false,
+        });
       }
       // Also mark session as needing sync (play count changed)
       next = {
