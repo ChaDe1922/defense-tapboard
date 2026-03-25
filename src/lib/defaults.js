@@ -89,13 +89,14 @@ export function createDefaultLookups() {
 
 export function createFreshState() {
   return {
-    version: 2,
+    version: 3,
     activeSessionId: null,
     sessions: [],
     playsBySessionId: {},
     currentEntryBySessionId: {},
     presets: [...defaultPresets],
     lookups: createDefaultLookups(),
+    auditLog: [],
     lastUpdatedAt: new Date().toISOString(),
   };
 }
