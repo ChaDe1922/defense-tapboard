@@ -1,21 +1,22 @@
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../lib/GameContext';
 
-function ActionButton({ children, onClick }) {
+function ActionButton({ children, onClick, ariaLabel }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer"
+      aria-label={ariaLabel}
+      className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2.5 min-h-[44px] text-sm font-semibold text-slate-800 hover:bg-slate-50 hover:border-slate-400 transition-all duration-150 active:scale-[0.97] cursor-pointer dark:bg-slate-800 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-700"
     >
       {children}
     </button>
   );
 }
 
-export default function QuickActionRow({ onEditLast }) {
+export default function QuickActionRow({ onEditLast, onEndDrive }) {
   const navigate = useNavigate();
-  const { repeatLast, undoLast, plays, showToast } = useGame();
+  const { repeatLast, undoLast, plays, showToast, currentDrive } = useGame();
 
   const handleEditLast = () => {
     const activePlays = plays.filter(p => !p.deleted);
@@ -28,39 +29,46 @@ export default function QuickActionRow({ onEditLast }) {
   };
 
   return (
-    <div className="grid grid-cols-4 gap-2 px-4 md:px-6">
-      <ActionButton onClick={repeatLast}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+    <div className="grid grid-cols-5 gap-2 px-4 md:px-6">
+      <ActionButton onClick={repeatLast} ariaLabel="Repeat last play">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
           <path d="M21 12a9 9 0 0 0-15-6.7L3 8" />
           <path d="M3 3v5h5" />
           <path d="M3 12a9 9 0 0 0 15 6.7L21 16" />
           <path d="M16 16h5v5" />
         </svg>
-        Repeat
+        <span>Repeat</span>
       </ActionButton>
-      <ActionButton onClick={undoLast}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+      <ActionButton onClick={undoLast} ariaLabel="Undo last play">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
           <path d="M3 7v6h6" />
           <path d="M21 17v-6h-6" />
           <path d="M7 13a7 7 0 0 0 11 4" />
           <path d="M17 11A7 7 0 0 0 6 7" />
         </svg>
-        Undo
+        <span>Undo</span>
       </ActionButton>
-      <ActionButton onClick={handleEditLast}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+      <ActionButton onClick={handleEditLast} ariaLabel="Edit last play">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
         </svg>
-        Edit
+        <span>Edit</span>
       </ActionButton>
-      <ActionButton onClick={() => navigate('/dashboard')}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+      <ActionButton onClick={onEndDrive} ariaLabel="End current drive">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+          <rect x="6" y="4" width="4" height="16" rx="1" />
+          <rect x="14" y="4" width="4" height="16" rx="1" />
+        </svg>
+        <span className={currentDrive ? 'text-amber-600 dark:text-amber-400' : ''}>Drive</span>
+      </ActionButton>
+      <ActionButton onClick={() => navigate('/dashboard')} ariaLabel="View dashboard statistics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
           <path d="M4 20V10" />
           <path d="M12 20V4" />
           <path d="M20 20v-6" />
         </svg>
-        Stats
+        <span>Stats</span>
       </ActionButton>
     </div>
   );

@@ -22,19 +22,20 @@ export function filterByQuarter(plays, quarter) {
  * Filter plays by outcome classification.
  * @param {Array} plays
  * @param {string} outcomeFilter - 'All' | 'Positive' | 'Neutral' | 'Negative' | specific outcome
+ * @param {Array} [lookups] - optional managed lookups for classification
  * @returns {Array}
  */
-export function filterByOutcome(plays, outcomeFilter) {
+export function filterByOutcome(plays, outcomeFilter, lookups) {
   if (!outcomeFilter || outcomeFilter === 'All') return plays;
   
   if (outcomeFilter === 'Positive') {
-    return plays.filter((p) => isPositiveOutcome(p.outcome));
+    return plays.filter((p) => isPositiveOutcome(p.outcome, lookups));
   }
   if (outcomeFilter === 'Neutral') {
-    return plays.filter((p) => isNeutralOutcome(p.outcome));
+    return plays.filter((p) => isNeutralOutcome(p.outcome, lookups));
   }
   if (outcomeFilter === 'Negative') {
-    return plays.filter((p) => isNegativeOutcome(p.outcome));
+    return plays.filter((p) => isNegativeOutcome(p.outcome, lookups));
   }
   
   // Specific outcome filter
@@ -45,9 +46,10 @@ export function filterByOutcome(plays, outcomeFilter) {
  * Apply all filters to plays.
  * @param {Array} plays
  * @param {{quarter?: string, outcome?: string}} filters
+ * @param {Array} [lookups] - optional managed lookups for classification
  * @returns {Array}
  */
-export function filterPlays(plays, filters = {}) {
+export function filterPlays(plays, filters = {}, lookups) {
   let filtered = plays;
   
   if (filters.quarter) {
@@ -55,7 +57,7 @@ export function filterPlays(plays, filters = {}) {
   }
   
   if (filters.outcome) {
-    filtered = filterByOutcome(filtered, filters.outcome);
+    filtered = filterByOutcome(filtered, filters.outcome, lookups);
   }
   
   return filtered;
@@ -111,11 +113,12 @@ export function getTurnoversCount(plays) {
 /**
  * Get positive rate percentage.
  * @param {Array} plays
+ * @param {Array} [lookups] - optional managed lookups for classification
  * @returns {number}
  */
-export function getPositiveRate(plays) {
+export function getPositiveRate(plays, lookups) {
   if (!plays || plays.length === 0) return 0;
-  const positiveCount = plays.filter((p) => isPositiveOutcome(p.outcome)).length;
+  const positiveCount = plays.filter((p) => isPositiveOutcome(p.outcome, lookups)).length;
   return (positiveCount / plays.length) * 100;
 }
 
@@ -222,7 +225,7 @@ export function getRecentPlays(plays, limit = 10) {
  * @param {Array} plays
  * @returns {Array<{combo: string, calls: number, positive: number, neutral: number, negative: number, turnovers: number, positiveRate: number}>}
  */
-export function getComboStats(plays) {
+export function getComboStats(plays, lookups) {
   if (!plays || plays.length === 0) return [];
   
   const comboMap = {};
@@ -243,11 +246,11 @@ export function getComboStats(plays) {
     
     comboMap[key].calls++;
     
-    if (isPositiveOutcome(play.outcome)) {
+    if (isPositiveOutcome(play.outcome, lookups)) {
       comboMap[key].positive++;
-    } else if (isNeutralOutcome(play.outcome)) {
+    } else if (isNeutralOutcome(play.outcome, lookups)) {
       comboMap[key].neutral++;
-    } else if (isNegativeOutcome(play.outcome)) {
+    } else if (isNegativeOutcome(play.outcome, lookups)) {
       comboMap[key].negative++;
     }
     
@@ -275,20 +278,20 @@ export function getComboStats(plays) {
  * @param {{quarter?: string, outcome?: string}} filters
  * @returns {object}
  */
-export function getDashboardSummary(plays, filters = {}) {
-  const filteredPlays = filterPlays(plays, filters);
+export function getDashboardSummary(plays, filters = {}, lookups) {
+  const filteredPlays = filterPlays(plays, filters, lookups);
   
   return {
     totalPlays: getTotalPlays(filteredPlays),
     sacks: getSacksCount(filteredPlays),
     tfl: getTFLCount(filteredPlays),
     turnovers: getTurnoversCount(filteredPlays),
-    positiveRate: getPositiveRate(filteredPlays),
+    positiveRate: getPositiveRate(filteredPlays, lookups),
     outcomeBreakdown: getOutcomeBreakdown(filteredPlays),
     playTypeUsage: getPlayTypeUsage(filteredPlays),
     blitzUsage: getBlitzUsage(filteredPlays),
     stuntUsage: getStuntUsage(filteredPlays),
-    comboStats: getComboStats(filteredPlays),
+    comboStats: getComboStats(filteredPlays, lookups),
     recentPlays: getRecentPlays(plays, 10), // Recent plays unfiltered
   };
 }

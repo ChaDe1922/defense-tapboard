@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { useGame } from '../lib/GameContext';
 import { getAllPresets, getLookupsByType } from '../lib/config-manager';
 
-const inputClass = 'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition';
-const selectClass = 'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition appearance-none';
+const inputClass = 'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 dark:placeholder:text-slate-500';
+const selectClass = 'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition appearance-none dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100';
 
 const FILTERS = ['All', 'Active', 'Favorites', 'Inactive'];
 
@@ -63,7 +63,7 @@ function PresetForm({ preset, lookups, onSave, onCancel }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
-        <label className="block text-sm font-semibold text-slate-800 mb-1">
+        <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
           Preset name <span className="text-rose-500">*</span>
         </label>
         <input
@@ -77,7 +77,7 @@ function PresetForm({ preset, lookups, onSave, onCancel }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="block text-sm font-semibold text-slate-800 mb-1">
+          <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
             Play type <span className="text-rose-500">*</span>
           </label>
           <select
@@ -90,7 +90,7 @@ function PresetForm({ preset, lookups, onSave, onCancel }) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-semibold text-slate-800 mb-1">
+          <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
             Blitz <span className="text-rose-500">*</span>
           </label>
           <select
@@ -103,7 +103,7 @@ function PresetForm({ preset, lookups, onSave, onCancel }) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-semibold text-slate-800 mb-1">
+          <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
             Line stunt <span className="text-rose-500">*</span>
           </label>
           <select
@@ -118,11 +118,11 @@ function PresetForm({ preset, lookups, onSave, onCancel }) {
       </div>
 
       <div className="flex items-center gap-6">
-        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
           <input type="checkbox" checked={favorite} onChange={() => setFavorite(!favorite)} className="rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
           Favorite
         </label>
-        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
           <input type="checkbox" checked={active} onChange={() => setActive(!active)} className="rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
           Active
         </label>
@@ -132,7 +132,7 @@ function PresetForm({ preset, lookups, onSave, onCancel }) {
         <button type="submit" className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold px-5 py-2 transition active:scale-[0.98] cursor-pointer">
           {preset ? 'Save Changes' : 'Add Preset'}
         </button>
-        <button type="button" onClick={onCancel} className="rounded-xl border border-slate-300 bg-white text-slate-700 text-sm font-semibold px-5 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer">
+        <button type="button" onClick={onCancel} className="rounded-xl border border-slate-300 bg-white text-slate-700 text-sm font-semibold px-5 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600">
           Cancel
         </button>
       </div>
@@ -146,11 +146,11 @@ function PresetRow({ preset, onEdit, onDelete, onToggleFavorite, onToggleActive,
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div className={`rounded-xl border p-3.5 transition ${preset.active ? 'border-slate-300 bg-white' : 'border-slate-200 bg-slate-50 opacity-70'}`}>
+    <div className={`rounded-xl border p-3.5 transition ${preset.active ? 'border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-600' : 'border-slate-200 bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 opacity-70'}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-900 text-base">{preset.name}</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100 text-base">{preset.name}</span>
             {preset.favorite && (
               <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">★ Fav</span>
             )}
@@ -158,7 +158,7 @@ function PresetRow({ preset, onEdit, onDelete, onToggleFavorite, onToggleActive,
               <span className="inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-600">Inactive</span>
             )}
           </div>
-          <div className="text-sm text-slate-600 mt-0.5">
+          <div className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
             {preset.playType} · {preset.blitz} · {preset.lineStunt}
           </div>
         </div>
@@ -168,7 +168,7 @@ function PresetRow({ preset, onEdit, onDelete, onToggleFavorite, onToggleActive,
           <button
             onClick={onMoveUp}
             disabled={isFirst}
-            className="p-1 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-default cursor-pointer text-slate-500"
+            className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-default cursor-pointer text-slate-500 dark:text-slate-400"
             title="Move up"
           >
             <ChevronUpIcon />
@@ -176,7 +176,7 @@ function PresetRow({ preset, onEdit, onDelete, onToggleFavorite, onToggleActive,
           <button
             onClick={onMoveDown}
             disabled={isLast}
-            className="p-1 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-default cursor-pointer text-slate-500"
+            className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-default cursor-pointer text-slate-500 dark:text-slate-400"
             title="Move down"
           >
             <ChevronDownIcon />
@@ -188,7 +188,7 @@ function PresetRow({ preset, onEdit, onDelete, onToggleFavorite, onToggleActive,
       <div className="flex flex-wrap items-center gap-2 mt-2.5">
         <button
           onClick={onToggleFavorite}
-          className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium hover:bg-slate-50 transition cursor-pointer"
+          className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition cursor-pointer"
           title={preset.favorite ? 'Remove from favorites' : 'Add to favorites'}
         >
           <StarIcon filled={preset.favorite} />
@@ -198,22 +198,22 @@ function PresetRow({ preset, onEdit, onDelete, onToggleFavorite, onToggleActive,
           onClick={onToggleActive}
           className={`rounded-lg border px-2.5 py-1.5 text-xs font-medium transition cursor-pointer ${
             preset.active
-              ? 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
-              : 'border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700'
+              ? 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200'
+              : 'border-emerald-200 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-900/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400'
           }`}
         >
           {preset.active ? 'Deactivate' : 'Activate'}
         </button>
         <button
           onClick={onEdit}
-          className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+          className="rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition cursor-pointer"
         >
           Edit
         </button>
         {!confirmDelete ? (
           <button
             onClick={() => setConfirmDelete(true)}
-            className="rounded-lg border border-rose-200 bg-white px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+            className="rounded-lg border border-rose-200 dark:border-rose-800 bg-white dark:bg-rose-950/40 px-2.5 py-1.5 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition cursor-pointer"
           >
             Delete
           </button>
@@ -227,7 +227,7 @@ function PresetRow({ preset, onEdit, onDelete, onToggleFavorite, onToggleActive,
             </button>
             <button
               onClick={() => setConfirmDelete(false)}
-              className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+              className="rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600 transition cursor-pointer"
             >
               Cancel
             </button>
@@ -283,12 +283,12 @@ export default function PresetManager() {
   }
 
   return (
-    <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+    <div className="rounded-2xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
       <div className="p-4 pb-2">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-bold text-slate-900">Preset Manager</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Add, edit, and organize call packages</p>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Preset Manager</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Add, edit, and organize call packages</p>
           </div>
           {!showForm && !editingPreset && (
             <button
@@ -304,16 +304,16 @@ export default function PresetManager() {
       <div className="p-4 pt-2 space-y-4">
         {/* Add form */}
         {showForm && (
-          <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4">
-            <h4 className="font-semibold text-slate-900 mb-3">New preset</h4>
+          <div className="rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50/50 dark:bg-violet-900/20 p-4">
+            <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">New preset</h4>
             <PresetForm lookups={lookups} onSave={handleAddPreset} onCancel={() => setShowForm(false)} />
           </div>
         )}
 
         {/* Edit form */}
         {editingPreset && (
-          <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4">
-            <h4 className="font-semibold text-slate-900 mb-3">Edit preset</h4>
+          <div className="rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50/50 dark:bg-violet-900/20 p-4">
+            <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">Edit preset</h4>
             <PresetForm
               preset={editingPreset}
               lookups={lookups}
@@ -331,8 +331,8 @@ export default function PresetManager() {
               onClick={() => setFilter(f)}
               className={`rounded-full px-3 py-1 text-sm font-medium transition cursor-pointer ${
                 filter === f
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
               }`}
             >
               {f}

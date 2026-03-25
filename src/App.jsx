@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { GameProvider } from './lib/GameContext';
+import { ThemeProvider } from './lib/ThemeContext';
 import Layout from './components/Layout';
 import LiveEntry from './pages/LiveEntry';
 import Dashboard from './pages/Dashboard';
@@ -9,15 +10,17 @@ import './App.css';
 export default function App() {
   return (
     <BrowserRouter basename="/defense-tapboard">
-      <GameProvider>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<LiveEntry />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/setup" element={<Setup />} />
-          </Route>
-        </Routes>
-      </GameProvider>
+      <ThemeProvider>
+        <GameProvider>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<LiveEntry />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/setup" element={<Setup />} />
+            </Route>
+          </Routes>
+        </GameProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

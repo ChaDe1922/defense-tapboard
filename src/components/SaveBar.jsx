@@ -1,41 +1,46 @@
 import { cn } from '../lib/utils';
 import { useGame } from '../lib/GameContext';
 
-export default function SaveBar() {
-  const { isValid, clearEntry, savePlay } = useGame();
+export default function SaveBar({ onContinueToOutcome }) {
+  const { selectedPlayType, selectedBlitz, selectedStunt, clearEntry, showToast } = useGame();
+
+  const callReady = Boolean(selectedPlayType && selectedBlitz && selectedStunt);
+
+  function handleContinue() {
+    if (!callReady) {
+      showToast('Select play type, blitz, and line stunt first.', 1800);
+      return;
+    }
+    onContinueToOutcome();
+  }
 
   return (
-    <div className="sticky bottom-0 border-t border-slate-200 bg-white/95 backdrop-blur px-4 md:px-6 py-3">
-      <div className="mb-2 text-sm font-medium text-slate-600">
-        {isValid ? 'Ready to save' : 'Choose all required values to save this play'}
+    <div className="sticky bottom-0 border-t border-slate-200 bg-white/95 backdrop-blur-sm shadow-lg px-4 md:px-6 py-3 dark:bg-slate-900/95 dark:border-slate-700">
+      <div className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">
+        {callReady ? '✓ Call ready — continue to select outcome' : 'Select play type, blitz, and line stunt'}
       </div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-3">
         <button
           type="button"
           onClick={clearEntry}
-          className="h-12 rounded-xl border border-slate-300 bg-white text-base font-semibold text-slate-800 hover:bg-slate-50 transition active:scale-[0.99] cursor-pointer"
+          aria-label="Clear current entry"
+          className="min-h-[44px] rounded-xl border border-slate-300 bg-white text-sm md:text-base font-semibold text-slate-800 hover:bg-slate-50 hover:border-slate-400 transition-all duration-150 active:scale-[0.98] cursor-pointer dark:bg-slate-800 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-700"
         >
           Clear
         </button>
         <button
           type="button"
-          onClick={() => savePlay(false)}
-          className="h-12 rounded-xl border border-slate-300 bg-white text-base font-semibold text-slate-800 hover:bg-slate-50 transition active:scale-[0.99] cursor-pointer"
-        >
-          Save Play
-        </button>
-        <button
-          type="button"
-          onClick={() => savePlay(true)}
-          disabled={!isValid}
+          onClick={handleContinue}
+          disabled={!callReady}
+          aria-label="Continue to outcome selection"
           className={cn(
-            'h-12 rounded-xl border text-base font-semibold transition active:scale-[0.99] cursor-pointer',
-            isValid
-              ? 'bg-violet-600 hover:bg-violet-700 border-violet-600 text-white'
-              : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
+            'col-span-2 min-h-[44px] rounded-xl border text-sm md:text-base font-semibold transition-all duration-150 active:scale-[0.98] cursor-pointer',
+            callReady
+              ? 'bg-violet-600 hover:bg-violet-700 border-violet-600 text-white shadow-sm'
+              : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:border-slate-700 dark:text-slate-500'
           )}
         >
-          Save + Next
+          Continue to Outcome →
         </button>
       </div>
     </div>

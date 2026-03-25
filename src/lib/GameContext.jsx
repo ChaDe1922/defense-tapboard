@@ -14,7 +14,7 @@ import {
   updatePlayNumber,
   updateQuarter,
 } from './session-manager';
-import { validateSelection, buildTimeLabel, positiveOutcomes } from './utils';
+import { validateSelection, buildTimeLabel } from './utils';
 import { buildGamePayload, buildPlayPayload, buildPresetsPayload, buildLookupsPayload } from './sync';
 import { isEndpointConfigured, healthCheck } from './sheet-api';
 import {
@@ -43,6 +43,9 @@ import {
   deleteLookupItem as cmDeleteLookup,
   toggleLookupActive as cmToggleLookupActive,
   moveLookupItem as cmMoveLookup,
+  updateLookupClassification as cmUpdateClassification,
+  getOutcomeClassification,
+  DEFAULT_OUTCOME_CLASSIFICATIONS,
   migratePresets,
 } from './config-manager';
 import {
@@ -52,6 +55,13 @@ import {
   restorePlay,
   getActivePlays,
 } from './corrections';
+import {
+  getActiveDrive,
+  getSessionDrives,
+  addPlayToDrive,
+  endActiveDrive,
+  buildDriveSummary,
+} from './drive-manager';
 
 const GameContext = createContext(null);
 
@@ -105,6 +115,24 @@ function hydrateInitialState() {
     }
 
     persisted.version = 3;
+  }
+
+  // Phase 9: Migrate v3 to v4 (add outcome classification + drives)
+  if (persisted.version < 4) {
+    // Add classification to existing outcome lookups
+    if (persisted.lookups) {
+      persisted.lookups = persisted.lookups.map((l) => {
+        if (l.lookupType === 'outcome' && !l.classification) {
+          return { ...l, classification: DEFAULT_OUTCOME_CLASSIFICATIONS[l.value] || 'neutral' };
+        }
+        return l;
+      });
+    }
+    // Initialize drives tracking
+    if (!persisted.drivesBySessionId) {
+      persisted.drivesBySessionId = {};
+    }
+    persisted.version = 4;
   }
 
   return persisted;
@@ -556,10 +584,10 @@ export function GameProvider({ children }) {
 
   // ── Phase 7: Lookup Management ────────────────────────────────
 
-  const addLookupValue = useCallback((lookupType, value) => {
+  const addLookupValue = useCallback((lookupType, value, classification = null) => {
     let result;
     setAppState((prev) => {
-      result = cmAddLookup(prev.lookups || [], lookupType, value);
+      result = cmAddLookup(prev.lookups || [], lookupType, value, classification);
       if (result.error) return prev;
       return { ...prev, lookups: result.lookups };
     });
@@ -612,11 +640,24 @@ export function GameProvider({ children }) {
     syncLookupsAfterChange();
   }, [syncLookupsAfterChange]);
 
+  const updateLookupClassificationValue = useCallback((itemId, classification) => {
+    let result;
+    setAppState((prev) => {
+      result = cmUpdateClassification(prev.lookups || [], itemId, classification);
+      if (result.error) return prev;
+      return { ...prev, lookups: result.lookups };
+    });
+    if (result?.error) { showToast(result.error, 2000); return false; }
+    syncLookupsAfterChange();
+    return true;
+  }, [showToast, syncLookupsAfterChange]);
+
   // ── Save Play ───────────────────────────────────────────────────
 
-  const savePlay = useCallback((advance = false) => {
+  const savePlay = useCallback((advance = false, outcomeOverride = null) => {
     if (!activeSession) return false;
-    if (!validateSelection(selectedPlayType, selectedBlitz, selectedStunt, selectedOutcome)) {
+    const finalOutcome = outcomeOverride || selectedOutcome;
+    if (!validateSelection(selectedPlayType, selectedBlitz, selectedStunt, finalOutcome)) {
       showToast('Select play type, blitz, stunt, and outcome first.', 1800);
       return false;
     }
@@ -629,7 +670,7 @@ export function GameProvider({ children }) {
       playType: selectedPlayType,
       blitz: selectedBlitz,
       lineStunt: selectedStunt,
-      outcome: selectedOutcome,
+      outcome: finalOutcome,
       quarter,
       timeLabel: buildTimeLabel(playNumber),
       presetId: selectedPreset ? selectedPreset.id : null,
@@ -647,6 +688,8 @@ export function GameProvider({ children }) {
 
     setAppState((prev) => {
       let next = addPlayToSession(prev, activeSession.id, play);
+      // Track play in current drive (auto-starts drive if none active)
+      next = addPlayToDrive(next, activeSession.id, play.id, playNumber);
       if (advance) {
         next = updatePlayNumber(next, activeSession.id, playNumber + 1);
         next = updateEntryState(next, activeSession.id, { selectedOutcome: null });
@@ -718,6 +761,44 @@ export function GameProvider({ children }) {
     if (!activeSession) return;
     setAppState((prev) => updateQuarter(prev, activeSession.id, q));
   }, [activeSession]);
+
+  // ── Phase 9: Drive Management ──────────────────────────────────
+
+  const currentDrive = useMemo(() => {
+    if (!activeSession) return null;
+    return getActiveDrive(appState, activeSession.id);
+  }, [appState, activeSession]);
+
+  const drives = useMemo(() => {
+    if (!activeSession) return [];
+    return getSessionDrives(appState, activeSession.id);
+  }, [appState, activeSession]);
+
+  const endDrive = useCallback(() => {
+    if (!activeSession) return null;
+    let endedDrive = null;
+    setAppState((prev) => {
+      const result = endActiveDrive(prev, activeSession.id);
+      endedDrive = result.drive;
+      if (!endedDrive) return prev;
+      return result.state;
+    });
+    if (endedDrive) {
+      const summary = buildDriveSummary(endedDrive, plays, appState.lookups || []);
+      showToast(`Drive ${endedDrive.driveNumber} ended (${summary.totalPlays} plays)`, 2000);
+      return summary;
+    }
+    showToast('No active drive to end');
+    return null;
+  }, [activeSession, plays, appState.lookups, showToast]);
+
+  const getDriveSummaryById = useCallback((driveId) => {
+    if (!activeSession) return null;
+    const allDrives = getSessionDrives(appState, activeSession.id);
+    const drive = allDrives.find((d) => d.id === driveId);
+    if (!drive) return null;
+    return buildDriveSummary(drive, plays, appState.lookups || []);
+  }, [activeSession, appState, plays]);
 
   // ── Phase 8: Play Correction Actions ────────────────────────────
 
@@ -995,7 +1076,11 @@ export function GameProvider({ children }) {
     const turnovers = activePlays.filter((p) => p.outcome === 'Turnover').length;
     const sacks = activePlays.filter((p) => p.outcome === 'Sack').length;
     const tfl = activePlays.filter((p) => p.outcome === 'Tackle for loss').length;
-    const positive = activePlays.filter((p) => positiveOutcomes.has(p.outcome)).length;
+    // Phase 9: Use lookup-driven classification
+    const positive = activePlays.filter((p) => {
+      const cls = getOutcomeClassification(lookups, p.outcome);
+      return cls === 'positive';
+    }).length;
 
     const outcomeCounts = {};
     activePlays.forEach((p) => {
@@ -1007,7 +1092,8 @@ export function GameProvider({ children }) {
       const key = `${p.playType} • ${p.blitz} • ${p.lineStunt}`;
       if (!comboMap[key]) comboMap[key] = { combo: key, calls: 0, positive: 0, turnovers: 0 };
       comboMap[key].calls++;
-      if (positiveOutcomes.has(p.outcome)) comboMap[key].positive++;
+      const cls = getOutcomeClassification(lookups, p.outcome);
+      if (cls === 'positive') comboMap[key].positive++;
       if (p.outcome === 'Turnover') comboMap[key].turnovers++;
     });
     const combos = Object.values(comboMap).sort((a, b) => b.calls - a.calls).slice(0, 5);
@@ -1021,7 +1107,7 @@ export function GameProvider({ children }) {
       outcomes: outcomeCounts,
       combos,
     };
-  }, [plays]);
+  }, [plays, lookups]);
 
   // ── Context value ───────────────────────────────────────────────
 
@@ -1135,6 +1221,13 @@ export function GameProvider({ children }) {
     deleteLookupValue,
     toggleLookupActiveValue,
     moveLookupOrder,
+    // Phase 9: Outcome classification
+    updateLookupClassificationValue,
+    // Phase 9: Drive management
+    currentDrive,
+    drives,
+    endDrive,
+    getDriveSummaryById,
     // Connection
     sheetConnection,
     saveSheetConnection,
