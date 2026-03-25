@@ -8,7 +8,7 @@ import './App.css';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/defense-tapboard">
       <GameProvider>
         <Routes>
           <Route element={<Layout />}>
