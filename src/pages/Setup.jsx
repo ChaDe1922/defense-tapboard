@@ -52,7 +52,7 @@ function formatRelative(iso) {
 function FormField({ label, required, children }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-slate-800 mb-1">
+      <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
         {label} {required && <span className="text-rose-500">*</span>}
       </label>
       {children}
@@ -60,8 +60,8 @@ function FormField({ label, required, children }) {
   );
 }
 
-const inputClass = 'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition';
-const selectClass = 'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition appearance-none';
+const inputClass = 'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 dark:placeholder:text-slate-500';
+const selectClass = 'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition appearance-none dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100';
 
 // ── Session card component ────────────────────────────────────────
 
@@ -80,11 +80,11 @@ function syncLabel(syncStatus) {
 function SessionCard({ session, playsCount, unsyncedCount, onResume, onClose, onReopen, onArchive, onUnarchive, onRetrySync }) {
   const hasPending = unsyncedCount > 0 || session.syncStatus === 'queued' || session.syncStatus === 'failed';
   return (
-    <div className="rounded-xl border border-slate-300 bg-white p-4">
+    <div className="rounded-xl border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-600 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="font-bold text-slate-900 text-base">{session.label}</div>
-          <div className="text-sm text-slate-600 mt-0.5">
+          <div className="font-bold text-slate-900 dark:text-slate-100 text-base">{session.label}</div>
+          <div className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
             vs {session.opponent} · {session.date}
           </div>
           <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-slate-500">
@@ -127,7 +127,7 @@ function SessionCard({ session, playsCount, unsyncedCount, onResume, onClose, on
         {onClose && (
           <button
             onClick={onClose}
-            className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer"
+            className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600"
           >
             Close
           </button>
@@ -135,7 +135,7 @@ function SessionCard({ session, playsCount, unsyncedCount, onResume, onClose, on
         {onReopen && (
           <button
             onClick={onReopen}
-            className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer"
+            className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600"
           >
             Reopen
           </button>
@@ -143,7 +143,7 @@ function SessionCard({ session, playsCount, unsyncedCount, onResume, onClose, on
         {onArchive && (
           <button
             onClick={onArchive}
-            className="rounded-xl border border-slate-300 bg-white text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer"
+            className="rounded-xl border border-slate-300 bg-white text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-600"
           >
             Archive
           </button>
@@ -151,7 +151,7 @@ function SessionCard({ session, playsCount, unsyncedCount, onResume, onClose, on
         {onUnarchive && (
           <button
             onClick={onUnarchive}
-            className="rounded-xl border border-slate-300 bg-white text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer"
+            className="rounded-xl border border-slate-300 bg-white text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] cursor-pointer dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-600"
           >
             Unarchive
           </button>
@@ -417,17 +417,17 @@ export default function Setup() {
     : 'bg-amber-400';
 
   return (
-    <div className="bg-slate-50 min-h-full p-4 md:p-6">
+    <div className="bg-slate-50 dark:bg-slate-900 min-h-full p-4 md:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
 
         {/* Active session banner */}
         {activeSession && (
-          <div className="rounded-2xl bg-violet-50 ring-1 ring-violet-200 p-4">
+          <div className="rounded-2xl bg-violet-50 dark:bg-violet-900/20 ring-1 ring-violet-200 dark:ring-violet-700 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-violet-600">Active game</div>
-                <div className="font-bold text-slate-900 text-lg mt-0.5">{activeSession.label}</div>
-                <div className="text-sm text-slate-600">vs {activeSession.opponent} · Play #{activeSession.currentPlayNumber}</div>
+                <div className="text-xs font-semibold uppercase tracking-wide text-violet-600 dark:text-violet-400">Active game</div>
+                <div className="font-bold text-slate-900 dark:text-slate-100 text-lg mt-0.5">{activeSession.label}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">vs {activeSession.opponent} · Play #{activeSession.currentPlayNumber}</div>
               </div>
               <button
                 onClick={() => navigate('/')}
@@ -440,9 +440,9 @@ export default function Setup() {
         )}
 
         {/* A. Start New Game */}
-        <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+        <div className="rounded-2xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
           <div className="p-4 pb-2">
-            <h3 className="text-lg font-bold text-slate-900">Start new game</h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Start new game</h3>
           </div>
           <form onSubmit={handleSubmit} className="p-4 pt-2 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -523,7 +523,7 @@ export default function Setup() {
         {/* B. Open Games */}
         {openSessions.length > 0 && (
           <div>
-            <h3 className="text-base font-bold text-slate-900 mb-3">Open games</h3>
+            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-3">Open games</h3>
             <div className="space-y-3">
               {openSessions.map((s) => (
                 <SessionCard
@@ -544,7 +544,7 @@ export default function Setup() {
         {/* C. Closed Games */}
         {closedSessions.length > 0 && (
           <div>
-            <h3 className="text-base font-bold text-slate-900 mb-3">Closed games</h3>
+            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-3">Closed games</h3>
             <div className="space-y-3">
               {closedSessions.map((s) => (
                 <SessionCard
@@ -568,10 +568,10 @@ export default function Setup() {
             <button
               type="button"
               onClick={() => setShowArchived(!showArchived)}
-              className="flex items-center gap-2 text-base font-bold text-slate-900 mb-3 cursor-pointer"
+              className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-slate-100 mb-3 cursor-pointer"
             >
               Archived games
-              <span className="inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-700">
+              <span className="inline-flex items-center rounded-full bg-slate-200 dark:bg-slate-700 px-2 py-0.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
                 {archivedSessions.length}
               </span>
               <svg
@@ -600,10 +600,10 @@ export default function Setup() {
         )}
 
         {/* E. Google Sheets Connection */}
-        <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+        <div className="rounded-2xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
           <div className="p-4 pb-2">
-            <h3 className="text-lg font-bold text-slate-900">Google Sheets connection</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Configure where game data is synced</p>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Google Sheets connection</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Configure where game data is synced</p>
           </div>
           <div className="p-4 pt-2 space-y-4">
             {/* Sheet URL */}
@@ -639,26 +639,26 @@ export default function Setup() {
 
             {/* Tab names */}
             <div>
-              <div className="text-sm font-semibold text-slate-800 mb-2">Tab names</div>
+              <div className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Tab names</div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-500 mb-0.5">Games</label>
+                  <label className="block text-xs text-slate-500 dark:text-slate-400 mb-0.5">Games</label>
                   <input type="text" value={connGamesTab} onChange={(e) => setConnGamesTab(e.target.value)} className={inputClass} />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-500 mb-0.5">Plays</label>
+                  <label className="block text-xs text-slate-500 dark:text-slate-400 mb-0.5">Plays</label>
                   <input type="text" value={connPlaysTab} onChange={(e) => setConnPlaysTab(e.target.value)} className={inputClass} />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-500 mb-0.5">Presets</label>
+                  <label className="block text-xs text-slate-500 dark:text-slate-400 mb-0.5">Presets</label>
                   <input type="text" value={connPresetsTab} onChange={(e) => setConnPresetsTab(e.target.value)} className={inputClass} />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-500 mb-0.5">Lookups</label>
+                  <label className="block text-xs text-slate-500 dark:text-slate-400 mb-0.5">Lookups</label>
                   <input type="text" value={connLookupsTab} onChange={(e) => setConnLookupsTab(e.target.value)} className={inputClass} />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-500 mb-0.5">Audit Log</label>
+                  <label className="block text-xs text-slate-500 dark:text-slate-400 mb-0.5">Audit Log</label>
                   <input type="text" value={connAuditTab} onChange={(e) => setConnAuditTab(e.target.value)} className={inputClass} />
                 </div>
               </div>
@@ -678,39 +678,39 @@ export default function Setup() {
             </FormField>
 
             {/* Status indicators */}
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2 text-sm">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 space-y-2 text-sm">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-slate-600">
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                   <span className={`inline-block w-2 h-2 rounded-full ${endpointColor}`} />
                   Apps Script endpoint
                 </div>
-                <span className="font-medium text-slate-800">{endpointLabel}</span>
+                <span className="font-medium text-slate-800 dark:text-slate-200">{endpointLabel}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-600">Registration</span>
+                <span className="text-slate-600 dark:text-slate-400">Registration</span>
                 <span className={`font-medium ${sheetConnection.isRegistered ? 'text-emerald-700' : 'text-slate-500'}`}>
                   {sheetConnection.isRegistered ? 'Registered' : 'Not registered'}
                 </span>
               </div>
               {sheetConnection.lastConnectionCheckAt && (
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Last tested</span>
-                  <span className="font-medium text-slate-800">
+                  <span className="text-slate-600 dark:text-slate-400">Last tested</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">
                     {formatRelative(sheetConnection.lastConnectionCheckAt)} — {sheetConnection.lastConnectionCheckStatus === 'passed' ? 'Passed' : 'Failed'}
                   </span>
                 </div>
               )}
               {sheetConnection.registeredAt && (
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Registered</span>
-                  <span className="font-medium text-slate-800">{formatDate(sheetConnection.registeredAt)}</span>
+                  <span className="text-slate-600 dark:text-slate-400">Registered</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">{formatDate(sheetConnection.registeredAt)}</span>
                 </div>
               )}
             </div>
 
             {/* Action message */}
             {connMessage && (
-              <div className="text-sm text-slate-700 bg-slate-100 rounded-lg px-3 py-2">{connMessage}</div>
+              <div className="text-sm text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-lg px-3 py-2">{connMessage}</div>
             )}
 
             {/* Action buttons */}
@@ -725,21 +725,21 @@ export default function Setup() {
               <button
                 onClick={handleTestConnection}
                 disabled={connBusy}
-                className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] disabled:opacity-50 cursor-pointer dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600"
               >
                 Test Connection
               </button>
               <button
                 onClick={handleRegisterSheet}
                 disabled={connBusy}
-                className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] disabled:opacity-50 cursor-pointer dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600"
               >
                 Register Sheet
               </button>
               <button
                 onClick={handleInitializeSheet}
                 disabled={connBusy}
-                className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                className="rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold px-4 py-2 hover:bg-slate-50 transition active:scale-[0.98] disabled:opacity-50 cursor-pointer dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600"
               >
                 Initialize Sheet
               </button>
@@ -748,20 +748,20 @@ export default function Setup() {
         </div>
 
         {/* F. Sync Diagnostics */}
-        <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+        <div className="rounded-2xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
           <div className="p-4 pb-2">
-            <h3 className="text-lg font-bold text-slate-900">Sync diagnostics</h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Sync diagnostics</h3>
           </div>
           <div className="p-4 pt-2 space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">Connection status</span>
+              <span className="text-slate-600 dark:text-slate-400">Connection status</span>
               <span className={`font-medium capitalize ${connectionStatus === 'registered' ? 'text-emerald-700' : connectionStatus === 'connection_failed' ? 'text-rose-700' : 'text-slate-700'}`}>
                 {connectionStatus.replace('_', ' ')}
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">Synced records</span>
-              <span className="font-medium text-slate-800">{syncSummary.totalSynced}</span>
+              <span className="text-slate-600 dark:text-slate-400">Synced records</span>
+              <span className="font-medium text-slate-800 dark:text-slate-200">{syncSummary.totalSynced}</span>
             </div>
             {syncSummary.totalQueued > 0 && (
               <div className="flex items-center justify-between text-sm">
@@ -788,21 +788,21 @@ export default function Setup() {
 
         {/* G. Phase 5: Queue Reliability */}
         {queueSummary && (
-          <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+          <div className="rounded-2xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
             <div className="p-4 pb-2">
-              <h3 className="text-lg font-bold text-slate-900">Queue reliability</h3>
-              <p className="text-xs text-slate-500 mt-0.5">Offline-first sync queue status</p>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Queue reliability</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Offline-first sync queue status</p>
             </div>
             <div className="p-4 pt-2 space-y-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">Network status</span>
+                <span className="text-slate-600 dark:text-slate-400">Network status</span>
                 <span className={`font-medium capitalize ${networkStatus?.syncMode === 'online' ? 'text-emerald-700' : networkStatus?.syncMode === 'offline' ? 'text-slate-600' : 'text-amber-700'}`}>
                   {networkStatus?.syncMode || 'unknown'}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">Queue jobs</span>
-                <span className="font-medium text-slate-800">{queueSummary.totalJobs}</span>
+                <span className="text-slate-600 dark:text-slate-400">Queue jobs</span>
+                <span className="font-medium text-slate-800 dark:text-slate-200">{queueSummary.totalJobs}</span>
               </div>
               {queueSummary.queuedPlayCount > 0 && (
                 <div className="flex items-center justify-between text-sm">
@@ -818,13 +818,13 @@ export default function Setup() {
               )}
               {queueSummary.lastSuccessfulSyncAt && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600">Last synced</span>
-                  <span className="font-medium text-slate-800">{formatRelative(queueSummary.lastSuccessfulSyncAt)}</span>
+                  <span className="text-slate-600 dark:text-slate-400">Last synced</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">{formatRelative(queueSummary.lastSuccessfulSyncAt)}</span>
                 </div>
               )}
               {!queueSummary.lastSuccessfulSyncAt && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600">Last synced</span>
+                  <span className="text-slate-600 dark:text-slate-400">Last synced</span>
                   <span className="font-medium text-slate-500">Never</span>
                 </div>
               )}

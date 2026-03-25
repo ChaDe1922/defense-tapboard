@@ -1,12 +1,15 @@
 /**
- * Outcome classification logic for Phase 6 dashboard analytics.
+ * Outcome classification logic for dashboard analytics.
  * 
- * Classifies defensive play outcomes into positive, neutral, or negative
- * categories for coaching decision support.
+ * Supports both legacy hardcoded classification and lookup-driven classification.
+ * When lookups are provided, classification is resolved from managed outcome metadata.
+ * Falls back to hardcoded defaults for backward compatibility.
  */
 
+import { getOutcomeClassification as getFromLookups, DEFAULT_OUTCOME_CLASSIFICATIONS } from './config-manager';
+
 /**
- * Positive outcomes - defensive wins
+ * Positive outcomes - legacy hardcoded (used as fallback)
  */
 export const POSITIVE_OUTCOMES = new Set([
   'Tackle for loss',
@@ -16,14 +19,14 @@ export const POSITIVE_OUTCOMES = new Set([
 ]);
 
 /**
- * Neutral outcomes - acceptable defensive plays
+ * Neutral outcomes - legacy hardcoded (used as fallback)
  */
 export const NEUTRAL_OUTCOMES = new Set([
   '5 yards gained',
 ]);
 
 /**
- * Negative outcomes - defensive losses
+ * Negative outcomes - legacy hardcoded (used as fallback)
  */
 export const NEGATIVE_OUTCOMES = new Set([
   'First down',
@@ -31,13 +34,20 @@ export const NEGATIVE_OUTCOMES = new Set([
 ]);
 
 /**
- * Classify an outcome as positive, neutral, or negative.
+ * Classify an outcome. Uses managed lookups if provided, else falls back to hardcoded sets.
  * @param {string} outcome
+ * @param {Array} [lookups] - optional managed lookups array
  * @returns {'positive'|'neutral'|'negative'|'unclassified'}
  */
-export function classifyOutcome(outcome) {
+export function classifyOutcome(outcome, lookups) {
   if (!outcome) return 'unclassified';
   
+  // If lookups provided, use managed classification
+  if (lookups && lookups.length > 0) {
+    return getFromLookups(lookups, outcome);
+  }
+  
+  // Legacy fallback
   if (POSITIVE_OUTCOMES.has(outcome)) return 'positive';
   if (NEUTRAL_OUTCOMES.has(outcome)) return 'neutral';
   if (NEGATIVE_OUTCOMES.has(outcome)) return 'negative';
@@ -48,36 +58,49 @@ export function classifyOutcome(outcome) {
 /**
  * Check if outcome is positive.
  * @param {string} outcome
+ * @param {Array} [lookups] - optional managed lookups array
  * @returns {boolean}
  */
-export function isPositiveOutcome(outcome) {
+export function isPositiveOutcome(outcome, lookups) {
+  if (lookups && lookups.length > 0) {
+    return getFromLookups(lookups, outcome) === 'positive';
+  }
   return POSITIVE_OUTCOMES.has(outcome);
 }
 
 /**
  * Check if outcome is neutral.
  * @param {string} outcome
+ * @param {Array} [lookups] - optional managed lookups array
  * @returns {boolean}
  */
-export function isNeutralOutcome(outcome) {
+export function isNeutralOutcome(outcome, lookups) {
+  if (lookups && lookups.length > 0) {
+    return getFromLookups(lookups, outcome) === 'neutral';
+  }
   return NEUTRAL_OUTCOMES.has(outcome);
 }
 
 /**
  * Check if outcome is negative.
  * @param {string} outcome
+ * @param {Array} [lookups] - optional managed lookups array
  * @returns {boolean}
  */
-export function isNegativeOutcome(outcome) {
+export function isNegativeOutcome(outcome, lookups) {
+  if (lookups && lookups.length > 0) {
+    return getFromLookups(lookups, outcome) === 'negative';
+  }
   return NEGATIVE_OUTCOMES.has(outcome);
 }
 
 /**
  * Get all outcomes by classification.
  * @param {Array} plays
+ * @param {Array} [lookups] - optional managed lookups array
  * @returns {{positive: number, neutral: number, negative: number, unclassified: number}}
  */
-export function getOutcomeClassificationCounts(plays) {
+export function getOutcomeClassificationCounts(plays, lookups) {
   const counts = {
     positive: 0,
     neutral: 0,
@@ -86,7 +109,7 @@ export function getOutcomeClassificationCounts(plays) {
   };
 
   plays.forEach((play) => {
-    const classification = classifyOutcome(play.outcome);
+    const classification = classifyOutcome(play.outcome, lookups);
     counts[classification]++;
   });
 
@@ -96,11 +119,12 @@ export function getOutcomeClassificationCounts(plays) {
 /**
  * Get positive rate from plays.
  * @param {Array} plays
+ * @param {Array} [lookups] - optional managed lookups array
  * @returns {number} - percentage (0-100)
  */
-export function getPositiveRate(plays) {
+export function getPositiveRate(plays, lookups) {
   if (!plays || plays.length === 0) return 0;
   
-  const positiveCount = plays.filter((p) => isPositiveOutcome(p.outcome)).length;
+  const positiveCount = plays.filter((p) => isPositiveOutcome(p.outcome, lookups)).length;
   return (positiveCount / plays.length) * 100;
 }

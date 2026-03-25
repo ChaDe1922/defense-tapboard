@@ -21,6 +21,17 @@ export const REQUIRED_OUTCOMES = [
 
 const REQUIRED_OUTCOME_SET = new Set(REQUIRED_OUTCOMES);
 
+// Default classifications for required outcomes
+export const DEFAULT_OUTCOME_CLASSIFICATIONS = {
+  'Tackle for loss': 'positive',
+  'Sack': 'positive',
+  'First down': 'negative',
+  'Under': 'positive',
+  '5 yards gained': 'neutral',
+  'Over 10 yards gained': 'negative',
+  'Turnover': 'positive',
+};
+
 export function isProtectedOutcome(value) {
   return REQUIRED_OUTCOME_SET.has(value);
 }
@@ -44,9 +55,9 @@ function normalize(str) {
 
 // ── Lookup Item Factory ────────────────────────────────────────────
 
-export function createLookupItem({ lookupType, value, active = true, sortOrder = 0, required = false, protected: isProtected = false }) {
+export function createLookupItem({ lookupType, value, active = true, sortOrder = 0, required = false, protected: isProtected = false, classification = null }) {
   const now = new Date().toISOString();
-  return {
+  const item = {
     id: generateId(),
     lookupType,
     value: value.trim(),
@@ -58,6 +69,11 @@ export function createLookupItem({ lookupType, value, active = true, sortOrder =
     updatedAt: now,
     deleted: false,
   };
+  // Only outcome lookups get classification
+  if (lookupType === 'outcome') {
+    item.classification = classification || 'neutral';
+  }
+  return item;
 }
 
 // ── Seed Lookup Items from Defaults ────────────────────────────────
@@ -90,6 +106,7 @@ export function seedLookupItems(playTypes, blitzes, stunts, outcomes) {
       active: true,
       required: isReq,
       protected: isReq,
+      classification: DEFAULT_OUTCOME_CLASSIFICATIONS[v] || 'neutral',
     }));
   });
 
@@ -132,9 +149,14 @@ export function validateLookupValue(lookups, lookupType, value, excludeId = null
 
 // ── Lookup CRUD ────────────────────────────────────────────────────
 
-export function addLookupItem(lookups, lookupType, value) {
+export function addLookupItem(lookups, lookupType, value, classification = null) {
   const validation = validateLookupValue(lookups, lookupType, value);
   if (!validation.valid) return { lookups, error: validation.error };
+
+  // Outcome items require classification
+  if (lookupType === 'outcome' && !classification) {
+    return { lookups, error: 'Classification is required for outcomes' };
+  }
 
   const maxOrder = lookups
     .filter((l) => l.lookupType === lookupType && !l.deleted)
@@ -147,6 +169,7 @@ export function addLookupItem(lookups, lookupType, value) {
     active: true,
     required: false,
     protected: false,
+    classification: lookupType === 'outcome' ? (classification || 'neutral') : null,
   });
 
   return { lookups: [...lookups, item], error: null, item };
@@ -168,6 +191,37 @@ export function editLookupItem(lookups, itemId, newValue) {
     ),
     error: null,
   };
+}
+
+export function updateLookupClassification(lookups, itemId, classification) {
+  const item = lookups.find((l) => l.id === itemId);
+  if (!item) return { lookups, error: 'Item not found' };
+  if (item.lookupType !== 'outcome') return { lookups, error: 'Classification only applies to outcomes' };
+  if (!['positive', 'neutral', 'negative'].includes(classification)) {
+    return { lookups, error: 'Invalid classification' };
+  }
+
+  return {
+    lookups: lookups.map((l) =>
+      l.id === itemId
+        ? { ...l, classification, updatedAt: new Date().toISOString() }
+        : l
+    ),
+    error: null,
+  };
+}
+
+/**
+ * Get the classification for an outcome value from managed lookups.
+ * Falls back to DEFAULT_OUTCOME_CLASSIFICATIONS, then 'neutral'.
+ */
+export function getOutcomeClassification(lookups, outcomeValue) {
+  if (!outcomeValue) return 'neutral';
+  const item = lookups.find(
+    (l) => l.lookupType === 'outcome' && l.value === outcomeValue && !l.deleted
+  );
+  if (item && item.classification) return item.classification;
+  return DEFAULT_OUTCOME_CLASSIFICATIONS[outcomeValue] || 'neutral';
 }
 
 export function toggleLookupActive(lookups, itemId) {

@@ -18,13 +18,23 @@ export function validateSelection(playType, blitz, stunt, outcome) {
   return Boolean(playType && blitz && stunt && outcome);
 }
 
-export function getOutcomeAccent(outcome) {
+export function getOutcomeAccent(outcome, classification) {
+  if (classification) {
+    if (classification === 'positive') return 'emerald';
+    if (classification === 'negative') return 'red';
+    return 'amber';
+  }
   if (outcome === 'Turnover' || outcome === 'Sack' || outcome === 'Tackle for loss') return 'emerald';
   if (outcome === 'First down' || outcome === 'Over 10 yards gained') return 'red';
   return 'amber';
 }
 
-export function getOutcomeBadgeVariant(outcome) {
+export function getOutcomeBadgeVariant(outcome, classification) {
+  if (classification) {
+    if (classification === 'positive') return 'success';
+    if (classification === 'negative') return 'danger';
+    return 'warning';
+  }
   if (outcome === 'Turnover' || outcome === 'Sack' || outcome === 'Tackle for loss') return 'success';
   if (outcome === 'First down' || outcome === 'Over 10 yards gained') return 'danger';
   return 'warning';

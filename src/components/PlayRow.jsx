@@ -1,4 +1,6 @@
 import { getOutcomeBadgeVariant } from '../lib/utils';
+import { getOutcomeClassification } from '../lib/config-manager';
+import { useGame } from '../lib/GameContext';
 
 const badgeStyles = {
   success: 'bg-emerald-600 text-white',
@@ -7,14 +9,16 @@ const badgeStyles = {
 };
 
 export default function PlayRow({ play }) {
-  const variant = getOutcomeBadgeVariant(play.outcome);
+  const { lookups } = useGame();
+  const cls = getOutcomeClassification(lookups, play.outcome);
+  const variant = getOutcomeBadgeVariant(play.outcome, cls);
 
   return (
-    <div className="rounded-xl border border-slate-300 bg-white p-3.5">
+    <div className="rounded-xl border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-600 p-3.5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="font-bold text-slate-900 text-base">Play {play.playNumber ?? play.play}</div>
-          <div className="text-sm text-slate-600 mt-0.5">
+          <div className="font-bold text-slate-900 dark:text-slate-100 text-base">Play {play.playNumber ?? play.play}</div>
+          <div className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
             {play.playType} · {play.blitz} · {play.lineStunt ?? play.stunt}</div>
           {play.presetName && (
             <div className="text-xs text-violet-600 font-medium mt-0.5">

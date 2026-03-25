@@ -70,14 +70,14 @@ export default function PlayCorrectionForm({
       <div className="space-y-3">
         {/* Play Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
             Play Type
           </label>
           <select
             value={playType}
             onChange={(e) => setPlayType(e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg ${
-              errors.playType ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300'
+            className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-slate-700 dark:text-slate-100 ${
+              errors.playType ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300 dark:border-slate-600'
             }`}
           >
             <option value="">Select play type</option>
@@ -92,14 +92,14 @@ export default function PlayCorrectionForm({
 
         {/* Blitz */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
             Blitz
           </label>
           <select
             value={blitz}
             onChange={(e) => setBlitz(e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg ${
-              errors.blitz ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300'
+            className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-slate-700 dark:text-slate-100 ${
+              errors.blitz ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300 dark:border-slate-600'
             }`}
           >
             <option value="">Select blitz</option>
@@ -114,14 +114,14 @@ export default function PlayCorrectionForm({
 
         {/* Line Stunt */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
             Line Stunt
           </label>
           <select
             value={lineStunt}
             onChange={(e) => setLineStunt(e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg ${
-              errors.lineStunt ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300'
+            className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-slate-700 dark:text-slate-100 ${
+              errors.lineStunt ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300 dark:border-slate-600'
             }`}
           >
             <option value="">Select line stunt</option>
@@ -136,14 +136,14 @@ export default function PlayCorrectionForm({
 
         {/* Outcome */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
             Outcome
           </label>
           <select
             value={outcome}
             onChange={(e) => setOutcome(e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg ${
-              errors.outcome ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300'
+            className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-slate-700 dark:text-slate-100 ${
+              errors.outcome ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300 dark:border-slate-600'
             }`}
           >
             <option value="">Select outcome</option>
@@ -158,13 +158,13 @@ export default function PlayCorrectionForm({
 
         {/* Quarter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
             Quarter
           </label>
           <select
             value={quarter}
             onChange={(e) => setQuarter(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-slate-100"
           >
             <option value="Q1">Q1</option>
             <option value="Q2">Q2</option>
@@ -176,15 +176,15 @@ export default function PlayCorrectionForm({
 
         {/* Correction Reason (Optional) */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Correction Reason <span className="text-gray-500 text-xs">(optional)</span>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+            Correction Reason <span className="text-gray-500 dark:text-slate-500 text-xs">(optional)</span>
           </label>
           <input
             type="text"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="e.g., Wrong outcome tapped"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500"
             maxLength={100}
           />
         </div>
@@ -194,7 +194,7 @@ export default function PlayCorrectionForm({
       <div className="flex gap-3 pt-2">
         <button
           onClick={onCancel}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50"
+          className="flex-1 px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-700 dark:text-slate-300 font-medium hover:bg-gray-50 dark:hover:bg-slate-700"
         >
           Cancel
         </button>
@@ -204,7 +204,7 @@ export default function PlayCorrectionForm({
           className={`flex-1 px-4 py-2 rounded-lg font-medium ${
             hasChanges
               ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
           }`}
         >
           Save Changes
@@ -212,7 +212,7 @@ export default function PlayCorrectionForm({
       </div>
 
       {!hasChanges && (
-        <p className="text-sm text-gray-500 text-center">
+        <p className="text-sm text-gray-500 dark:text-slate-400 text-center">
           No changes made
         </p>
       )}

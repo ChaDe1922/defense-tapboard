@@ -1,8 +1,45 @@
 @import "tailwindcss";
 
+/* Phase 9: Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root.dark {
+  color-scheme: dark;
+}
+
+/* Phase 9: Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Phase 9: Focus Visible Enhancement */
+*:focus-visible {
+  outline: 2px solid rgb(139 92 246);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+.dark *:focus-visible {
+  outline-color: rgb(167 139 250);
+}
+
+/* Phase 9: Smooth Scrolling (respects reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
