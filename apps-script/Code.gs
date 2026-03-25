@@ -355,7 +355,9 @@ var PLAY_HEADERS = [
   'play_number', 'quarter', 'play_type', 'blitz', 'line_stunt',
   'outcome', 'preset_id', 'preset_name', 'preset_customized', 'entry_mode',
   'time_label', 'created_at', 'updated_at', 'local_updated_at',
-  'sync_status', 'sync_attempt_count', 'remote_written_at'
+  'sync_status', 'sync_attempt_count', 'remote_written_at',
+  'edited', 'corrected_status', 'deleted', 'deleted_at', 'last_corrected_at',
+  'correction_reason', 'inserted', 'revision'
 ];
 
 var PRESET_HEADERS = [
@@ -498,7 +500,15 @@ function handleUpsertPlay(request) {
       local_updated_at: payload.local_updated_at || now,
       sync_status: 'synced',
       sync_attempt_count: payload.sync_attempt_count || 1,
-      remote_written_at: now
+      remote_written_at: now,
+      edited: payload.edited ? 'TRUE' : 'FALSE',
+      corrected_status: payload.correctedStatus || payload.corrected_status || 'original',
+      deleted: payload.deleted ? 'TRUE' : 'FALSE',
+      deleted_at: payload.deletedAt || payload.deleted_at || '',
+      last_corrected_at: payload.lastCorrectedAt || payload.last_corrected_at || '',
+      correction_reason: payload.correctionReason || payload.correction_reason || '',
+      inserted: payload.inserted ? 'TRUE' : 'FALSE',
+      revision: payload.revision || 1
     };
 
     var result = upsertRow(sheet, headerMap, row, 'play_id');

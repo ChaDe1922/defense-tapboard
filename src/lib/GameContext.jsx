@@ -45,6 +45,13 @@ import {
   moveLookupItem as cmMoveLookup,
   migratePresets,
 } from './config-manager';
+import {
+  migratePlaysForCorrections,
+  editPlay,
+  softDeletePlay,
+  restorePlay,
+  getActivePlays,
+} from './corrections';
 
 const GameContext = createContext(null);
 
@@ -79,6 +86,25 @@ function hydrateInitialState() {
   // Phase 7: Migrate preset IDs from numbers to UUIDs
   if (persisted.presets && persisted.presets.some((p) => typeof p.id === 'number')) {
     persisted.presets = migratePresets(persisted.presets);
+  }
+
+  // Phase 8: Migrate v2 state to v3 (add correction fields and audit log)
+  if (persisted.version < 3) {
+    // Add audit log if missing
+    if (!persisted.auditLog) {
+      persisted.auditLog = [];
+    }
+
+    // Migrate all plays to include correction fields
+    if (persisted.playsBySessionId) {
+      for (const sessionId in persisted.playsBySessionId) {
+        persisted.playsBySessionId[sessionId] = migratePlaysForCorrections(
+          persisted.playsBySessionId[sessionId]
+        );
+      }
+    }
+
+    persisted.version = 3;
   }
 
   return persisted;
@@ -693,6 +719,134 @@ export function GameProvider({ children }) {
     setAppState((prev) => updateQuarter(prev, activeSession.id, q));
   }, [activeSession]);
 
+  // ── Phase 8: Play Correction Actions ────────────────────────────
+
+  const editPlayRecord = useCallback((playId, updates, reason = null) => {
+    if (!activeSession) return false;
+
+    let updatedPlay = null;
+    let auditEntry = null;
+
+    setAppState((prev) => {
+      const plays = prev.playsBySessionId[activeSession.id] || [];
+      const playIndex = plays.findIndex((p) => p.id === playId);
+      if (playIndex === -1) return prev;
+
+      const originalPlay = plays[playIndex];
+      const result = editPlay(originalPlay, updates, reason);
+      updatedPlay = result.play;
+      auditEntry = result.auditEntry;
+
+      const updatedPlays = [...plays];
+      updatedPlays[playIndex] = updatedPlay;
+
+      return {
+        ...prev,
+        playsBySessionId: {
+          ...prev.playsBySessionId,
+          [activeSession.id]: updatedPlays,
+        },
+        auditLog: [...(prev.auditLog || []), auditEntry],
+      };
+    });
+
+    if (updatedPlay) {
+      showToast('Play corrected', 1200);
+      // Enqueue sync for the corrected play
+      enqueuePlaySync(updatedPlay, activeSession);
+      if (networkStatus.syncMode === 'online') {
+        setTimeout(() => processQueueAsync(), 500);
+      }
+      return true;
+    }
+
+    return false;
+  }, [activeSession, showToast, enqueuePlaySync, processQueueAsync, networkStatus.syncMode]);
+
+  const softDeletePlayRecord = useCallback((playId, reason = null) => {
+    if (!activeSession) return false;
+
+    let deletedPlay = null;
+    let auditEntry = null;
+
+    setAppState((prev) => {
+      const plays = prev.playsBySessionId[activeSession.id] || [];
+      const playIndex = plays.findIndex((p) => p.id === playId);
+      if (playIndex === -1) return prev;
+
+      const originalPlay = plays[playIndex];
+      const result = softDeletePlay(originalPlay, reason);
+      deletedPlay = result.play;
+      auditEntry = result.auditEntry;
+
+      const updatedPlays = [...plays];
+      updatedPlays[playIndex] = deletedPlay;
+
+      return {
+        ...prev,
+        playsBySessionId: {
+          ...prev.playsBySessionId,
+          [activeSession.id]: updatedPlays,
+        },
+        auditLog: [...(prev.auditLog || []), auditEntry],
+      };
+    });
+
+    if (deletedPlay) {
+      showToast('Play deleted', 1200);
+      // Enqueue sync for the deleted play
+      enqueuePlaySync(deletedPlay, activeSession);
+      if (networkStatus.syncMode === 'online') {
+        setTimeout(() => processQueueAsync(), 500);
+      }
+      return true;
+    }
+
+    return false;
+  }, [activeSession, showToast, enqueuePlaySync, processQueueAsync, networkStatus.syncMode]);
+
+  const restorePlayRecord = useCallback((playId, reason = null) => {
+    if (!activeSession) return false;
+
+    let restoredPlay = null;
+    let auditEntry = null;
+
+    setAppState((prev) => {
+      const plays = prev.playsBySessionId[activeSession.id] || [];
+      const playIndex = plays.findIndex((p) => p.id === playId);
+      if (playIndex === -1) return prev;
+
+      const originalPlay = plays[playIndex];
+      const result = restorePlay(originalPlay, reason);
+      restoredPlay = result.play;
+      auditEntry = result.auditEntry;
+
+      const updatedPlays = [...plays];
+      updatedPlays[playIndex] = restoredPlay;
+
+      return {
+        ...prev,
+        playsBySessionId: {
+          ...prev.playsBySessionId,
+          [activeSession.id]: updatedPlays,
+        },
+        auditLog: [...(prev.auditLog || []), auditEntry],
+      };
+    });
+
+    if (restoredPlay) {
+      showToast('Play restored', 1200);
+      // Enqueue sync for the restored play
+      enqueuePlaySync(restoredPlay, activeSession);
+      if (networkStatus.syncMode === 'online') {
+        setTimeout(() => processQueueAsync(), 500);
+      }
+      return true;
+    }
+
+    return false;
+  }, [activeSession, showToast, enqueuePlaySync, processQueueAsync, networkStatus.syncMode]);
+
   // ── Session management actions (exposed to Setup) ───────────────
 
   const createGameSession = useCallback((params) => {
@@ -835,19 +989,21 @@ export function GameProvider({ children }) {
   // ── Dashboard-derived summary ───────────────────────────────────
 
   const summary = useMemo(() => {
-    const total = plays.length;
-    const turnovers = plays.filter((p) => p.outcome === 'Turnover').length;
-    const sacks = plays.filter((p) => p.outcome === 'Sack').length;
-    const tfl = plays.filter((p) => p.outcome === 'Tackle for loss').length;
-    const positive = plays.filter((p) => positiveOutcomes.has(p.outcome)).length;
+    // Phase 8: Exclude deleted plays from analytics
+    const activePlays = getActivePlays(plays);
+    const total = activePlays.length;
+    const turnovers = activePlays.filter((p) => p.outcome === 'Turnover').length;
+    const sacks = activePlays.filter((p) => p.outcome === 'Sack').length;
+    const tfl = activePlays.filter((p) => p.outcome === 'Tackle for loss').length;
+    const positive = activePlays.filter((p) => positiveOutcomes.has(p.outcome)).length;
 
     const outcomeCounts = {};
-    plays.forEach((p) => {
+    activePlays.forEach((p) => {
       outcomeCounts[p.outcome] = (outcomeCounts[p.outcome] || 0) + 1;
     });
 
     const comboMap = {};
-    plays.forEach((p) => {
+    activePlays.forEach((p) => {
       const key = `${p.playType} • ${p.blitz} • ${p.lineStunt}`;
       if (!comboMap[key]) comboMap[key] = { combo: key, calls: 0, positive: 0, turnovers: 0 };
       comboMap[key].calls++;
@@ -956,6 +1112,10 @@ export function GameProvider({ children }) {
     undoLast,
     // Quarter
     setQuarter,
+    // Phase 8: Play correction actions
+    editPlayRecord,
+    softDeletePlayRecord,
+    restorePlayRecord,
     // Session management
     createGameSession,
     resumeGameSession,

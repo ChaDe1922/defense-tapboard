@@ -13,9 +13,19 @@ function ActionButton({ children, onClick }) {
   );
 }
 
-export default function QuickActionRow() {
+export default function QuickActionRow({ onEditLast }) {
   const navigate = useNavigate();
-  const { repeatLast, undoLast, showToast } = useGame();
+  const { repeatLast, undoLast, plays, showToast } = useGame();
+
+  const handleEditLast = () => {
+    const activePlays = plays.filter(p => !p.deleted);
+    if (activePlays.length === 0) {
+      showToast('No plays to edit', 1500);
+      return;
+    }
+    const lastPlay = activePlays[activePlays.length - 1];
+    onEditLast(lastPlay);
+  };
 
   return (
     <div className="grid grid-cols-4 gap-2 px-4 md:px-6">
@@ -37,10 +47,10 @@ export default function QuickActionRow() {
         </svg>
         Undo
       </ActionButton>
-      <ActionButton onClick={() => showToast('Edit Last — coming soon', 1500)}>
+      <ActionButton onClick={handleEditLast}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 7v5l3 2" />
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
         </svg>
         Edit
       </ActionButton>
