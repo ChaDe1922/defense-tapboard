@@ -58,13 +58,14 @@ export default function DriveSummaryModal({ summary, onClose }) {
           </div>
 
           {/* Key Defensive Stats */}
-          {(summary.turnovers > 0 || summary.sacks > 0 || summary.tfl > 0) && (
+          {(summary.turnovers > 0 || summary.sacks > 0 || summary.tfl > 0 || summary.touchdowns > 0) && (
             <div>
               <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Defensive Highlights</h4>
               <div className="flex flex-wrap gap-2">
                 {summary.turnovers > 0 && <HighlightChip label="Turnovers" count={summary.turnovers} color="violet" />}
                 {summary.sacks > 0 && <HighlightChip label="Sacks" count={summary.sacks} color="blue" />}
                 {summary.tfl > 0 && <HighlightChip label="TFL" count={summary.tfl} color="emerald" />}
+                {summary.touchdowns > 0 && <HighlightChip label="TD Allowed" count={summary.touchdowns} color="rose" />}
               </div>
             </div>
           )}
@@ -153,6 +154,7 @@ function HighlightChip({ label, count, color }) {
     violet: 'bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-400',
     blue: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-400',
     emerald: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400',
+    rose: 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400',
   };
 
   return (

@@ -135,6 +135,54 @@ function hydrateInitialState() {
     persisted.version = 4;
   }
 
+  // Phase 9b: Migrate v4 to v5 (rename Under → Under 5 yards, add Touchdown)
+  if (persisted.version < 5) {
+    // Rename 'Under' → 'Under 5 yards' in lookups
+    if (persisted.lookups) {
+      persisted.lookups = persisted.lookups.map((l) => {
+        if (l.lookupType === 'outcome' && l.value === 'Under') {
+          return { ...l, value: 'Under 5 yards', classification: 'positive', updatedAt: new Date().toISOString() };
+        }
+        return l;
+      });
+      // Add 'Touchdown' if not already present
+      const hasTouchdown = persisted.lookups.some(
+        (l) => l.lookupType === 'outcome' && l.value === 'Touchdown' && !l.deleted
+      );
+      if (!hasTouchdown) {
+        const maxOrder = persisted.lookups
+          .filter((l) => l.lookupType === 'outcome' && !l.deleted)
+          .reduce((max, l) => Math.max(max, l.sortOrder), -1);
+        const now = new Date().toISOString();
+        persisted.lookups.push({
+          id: generateId(),
+          lookupType: 'outcome',
+          value: 'Touchdown',
+          active: true,
+          sortOrder: maxOrder + 1,
+          required: true,
+          protected: true,
+          classification: 'negative',
+          createdAt: now,
+          updatedAt: now,
+          deleted: false,
+        });
+      }
+    }
+    // Rename 'Under' → 'Under 5 yards' in all persisted plays
+    if (persisted.playsBySessionId) {
+      for (const sessionId in persisted.playsBySessionId) {
+        persisted.playsBySessionId[sessionId] = persisted.playsBySessionId[sessionId].map((p) => {
+          if (p.outcome === 'Under') {
+            return { ...p, outcome: 'Under 5 yards' };
+          }
+          return p;
+        });
+      }
+    }
+    persisted.version = 5;
+  }
+
   return persisted;
 }
 
@@ -658,7 +706,7 @@ export function GameProvider({ children }) {
     if (!activeSession) return false;
     const finalOutcome = outcomeOverride || selectedOutcome;
     if (!validateSelection(selectedPlayType, selectedBlitz, selectedStunt, finalOutcome)) {
-      showToast('Select play type, blitz, stunt, and outcome first.', 1800);
+      showToast('Select at least one call option and an outcome.', 1800);
       return false;
     }
 

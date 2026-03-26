@@ -164,6 +164,7 @@ export function buildDriveSummary(drive, allPlays, lookups) {
   let turnovers = 0;
   let sacks = 0;
   let tfl = 0;
+  let touchdowns = 0;
 
   drivePlays.forEach((p) => {
     outcomeCounts[p.outcome] = (outcomeCounts[p.outcome] || 0) + 1;
@@ -174,12 +175,14 @@ export function buildDriveSummary(drive, allPlays, lookups) {
     if (p.outcome === 'Turnover') turnovers++;
     if (p.outcome === 'Sack') sacks++;
     if (p.outcome === 'Tackle for loss') tfl++;
+    if (p.outcome === 'Touchdown') touchdowns++;
   });
 
-  // Most-used calls
+  // Most-used calls (handle partial selections gracefully)
   const callCounts = {};
   drivePlays.forEach((p) => {
-    const key = `${p.playType} · ${p.blitz} · ${p.lineStunt}`;
+    const parts = [p.playType, p.blitz, p.lineStunt].filter(Boolean);
+    const key = parts.length > 0 ? parts.join(' · ') : 'Unknown';
     callCounts[key] = (callCounts[key] || 0) + 1;
   });
   const topCalls = Object.entries(callCounts)
@@ -198,6 +201,7 @@ export function buildDriveSummary(drive, allPlays, lookups) {
     turnovers,
     sacks,
     tfl,
+    touchdowns,
     outcomeCounts,
     topCalls,
     positiveRate: totalPlays > 0 ? Math.round((positive / totalPlays) * 100) : 0,

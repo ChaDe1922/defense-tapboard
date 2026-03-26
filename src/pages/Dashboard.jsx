@@ -235,15 +235,17 @@ export default function Dashboard() {
             <div className="p-4 pt-0 space-y-2.5">
               {analytics.comboStats.slice(0, 8).map((row) => (
                 <div key={row.combo} className="rounded-xl bg-slate-50 dark:bg-slate-900 p-3">
-                  <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">{row.combo}</div>
-                  <div className="mt-1.5 flex flex-wrap gap-1.5 text-xs">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${badgeStyles.secondary}`}>
-                      {row.calls} calls
-                    </span>
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">{row.combo}</div>
+                    <span className={`shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                       row.positiveRate >= 50 ? badgeStyles.success : badgeStyles.secondary
                     }`}>
                       {Math.round(row.positiveRate)}% positive
+                    </span>
+                  </div>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5 text-xs">
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${badgeStyles.secondary}`}>
+                      {row.calls} calls
                     </span>
                     {row.turnovers > 0 && (
                       <span className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${badgeStyles.success}`}>

@@ -50,10 +50,11 @@ export const outcomes = [
   'Tackle for loss',
   'Sack',
   'First down',
-  'Under',
+  'Under 5 yards',
   '5 yards gained',
   'Over 10 yards gained',
   'Turnover',
+  'Touchdown',
 ];
 
 // ── Default presets (seeded once, then persisted) ──────────────────
@@ -89,7 +90,7 @@ export function createDefaultLookups() {
 
 export function createFreshState() {
   return {
-    version: 4,
+    version: 5,
     activeSessionId: null,
     sessions: [],
     playsBySessionId: {},

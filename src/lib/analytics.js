@@ -231,7 +231,8 @@ export function getComboStats(plays, lookups) {
   const comboMap = {};
   
   plays.forEach((play) => {
-    const key = `${play.playType} • ${play.blitz} • ${play.lineStunt}`;
+    const parts = [play.playType, play.blitz, play.lineStunt].filter(Boolean);
+    const key = parts.length > 0 ? parts.join(' • ') : 'Unknown';
     
     if (!comboMap[key]) {
       comboMap[key] = {

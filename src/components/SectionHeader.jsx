@@ -5,8 +5,8 @@ export default function SectionHeader({ title, badge, badgeVariant = 'secondary'
   };
 
   return (
-    <div className="flex items-center justify-between mb-3">
-      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">{title}</h3>
+    <div className="flex items-center justify-between mb-2.5">
+      <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">{title}</h3>
       {badge && (
         <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${badgeStyles[badgeVariant]}`}>
           {badge}

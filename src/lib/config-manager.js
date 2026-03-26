@@ -13,10 +13,11 @@ export const REQUIRED_OUTCOMES = [
   'Tackle for loss',
   'Sack',
   'First down',
-  'Under',
+  'Under 5 yards',
   '5 yards gained',
   'Over 10 yards gained',
   'Turnover',
+  'Touchdown',
 ];
 
 const REQUIRED_OUTCOME_SET = new Set(REQUIRED_OUTCOMES);
@@ -26,10 +27,13 @@ export const DEFAULT_OUTCOME_CLASSIFICATIONS = {
   'Tackle for loss': 'positive',
   'Sack': 'positive',
   'First down': 'negative',
-  'Under': 'positive',
+  'Under 5 yards': 'positive',
   '5 yards gained': 'neutral',
   'Over 10 yards gained': 'negative',
   'Turnover': 'positive',
+  'Touchdown': 'negative',
+  // Legacy mapping for migration safety
+  'Under': 'positive',
 };
 
 export function isProtectedOutcome(value) {
