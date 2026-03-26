@@ -36,10 +36,11 @@ export const outcomes = [
   'Tackle for loss',
   'Sack',
   'First down',
-  'Under',
+  'Under 5 yards',
   '5 yards gained',
   'Over 10 yards gained',
   'Turnover',
+  'Touchdown',
 ];
 
 export const presets = [
@@ -51,13 +52,13 @@ export const presets = [
 ];
 
 export const initialMockPlays = [
-  { play: 12, playType: 'Chicago', blitz: 'Heavy Sam', stunt: 'Pin', outcome: 'Under', quarter: 'Q2', time: '8:41', presetName: 'Chicago Pin', presetCustomized: false, entryMode: 'preset', createdAt: '03/28 8:41' },
+  { play: 12, playType: 'Chicago', blitz: 'Heavy Sam', stunt: 'Pin', outcome: 'Under 5 yards', quarter: 'Q2', time: '8:41', presetName: 'Chicago Pin', presetCustomized: false, entryMode: 'preset', createdAt: '03/28 8:41' },
   { play: 13, playType: 'Miami', blitz: 'Smash', stunt: 'Quick', outcome: 'Sack', quarter: 'Q2', time: '8:05', presetName: 'Miami Quick', presetCustomized: false, entryMode: 'preset', createdAt: '03/28 8:05' },
   { play: 14, playType: 'Death', blitz: 'Cyclone', stunt: 'River', outcome: 'Turnover', quarter: 'Q2', time: '7:22', presetName: 'Death River', presetCustomized: false, entryMode: 'preset', createdAt: '03/28 7:22' },
   { play: 15, playType: 'Chicago', blitz: 'Heavy Sam', stunt: 'Pin', outcome: 'Tackle for loss', quarter: 'Q2', time: '6:58', presetName: 'Chicago Pin', presetCustomized: false, entryMode: 'preset', createdAt: '03/28 6:58' },
   { play: 16, playType: 'Tampa', blitz: 'Wheel', stunt: 'Bow', outcome: '5 yards gained', quarter: 'Q2', time: '6:14', presetName: 'Tampa Bow', presetCustomized: false, entryMode: 'preset', createdAt: '03/28 6:14' },
   { play: 17, playType: 'Miami Show', blitz: 'Heavy Cyclone', stunt: 'Lake', outcome: 'First down', quarter: 'Q2', time: '5:40', presetName: null, presetCustomized: false, entryMode: 'manual', createdAt: '03/28 5:40' },
-  { play: 18, playType: 'Chicago', blitz: 'Heavy Sam', stunt: 'Pin', outcome: 'Under', quarter: 'Q2', time: '4:56', presetName: 'Chicago Pin', presetCustomized: false, entryMode: 'preset', createdAt: '03/28 4:56' },
+  { play: 18, playType: 'Chicago', blitz: 'Heavy Sam', stunt: 'Pin', outcome: 'Under 5 yards', quarter: 'Q2', time: '4:56', presetName: 'Chicago Pin', presetCustomized: false, entryMode: 'preset', createdAt: '03/28 4:56' },
   { play: 19, playType: 'Death', blitz: 'Cyclone', stunt: 'River', outcome: 'Over 10 yards gained', quarter: 'Q2', time: '4:08', presetName: 'Death River', presetCustomized: false, entryMode: 'preset', createdAt: '03/28 4:08' },
 ];
 

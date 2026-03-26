@@ -7,7 +7,7 @@
  */
 
 const STORAGE_KEY = 'defense_tapboard_state';
-const PERSISTENCE_VERSION = 1;
+const PERSISTENCE_VERSION = 5;
 
 /**
  * Safely parse a JSON string. Returns null on failure.
@@ -36,10 +36,11 @@ export function loadPersistedState() {
     const parsed = safelyParseJSON(raw);
     if (!parsed || typeof parsed !== 'object') return null;
 
-    // Version check — if mismatch, trigger reset (simple strategy for Phase 3)
-    if (parsed.version !== PERSISTENCE_VERSION) {
+    // Version check — allow stored versions that hydrateInitialState can migrate.
+    // Only reset if version is missing or higher than expected (corrupt/future data).
+    if (!parsed.version || parsed.version > PERSISTENCE_VERSION) {
       console.warn(
-        `[storage] Version mismatch: stored=${parsed.version}, expected=${PERSISTENCE_VERSION}. Resetting.`
+        `[storage] Version issue: stored=${parsed.version}, max=${PERSISTENCE_VERSION}. Resetting.`
       );
       clearPersistedState();
       return null;

@@ -4,7 +4,6 @@ import { useGame } from '../lib/GameContext';
 import { getPlayDisplayStatus } from '../lib/corrections';
 import EntryHeader from '../components/EntryHeader';
 import QuickActionRow from '../components/QuickActionRow';
-import PresetCard from '../components/PresetCard';
 import Selector from '../components/Selector';
 import SectionHeader from '../components/SectionHeader';
 import SaveBar from '../components/SaveBar';
@@ -18,18 +17,13 @@ export default function LiveEntry() {
   const {
     activeSession,
     plays,
-    activePresetList,
     managedPlayTypes,
     managedBlitzes,
     managedStunts,
     managedOutcomes,
-    selectedPresetId,
     selectedPlayType,
     selectedBlitz,
     selectedStunt,
-    selectedPreset,
-    presetCustomized,
-    applyPreset,
     setSelectedPlayType,
     setSelectedBlitz,
     setSelectedStunt,
@@ -92,42 +86,18 @@ export default function LiveEntry() {
       <EntryHeader />
 
       {/* B. Quick Actions */}
-      <div className="pt-4 pb-3">
+      <div className="pt-3 pb-2">
         <QuickActionRow onEditLast={setEditingPlay} onEndDrive={handleEndDrive} />
       </div>
 
       {/* Scrollable content area — Step 1: Call Selection */}
-      <div className="flex-1 overflow-auto overflow-x-hidden px-4 md:px-6 pb-6">
-        <div className="max-w-3xl mx-auto space-y-8">
-
-          {/* C. Preset Shortcut Strip */}
-          <section>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Preset shortcuts</h3>
-              <span className="text-sm text-slate-600 dark:text-slate-400">Tap to prefill</span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-              {activePresetList.map((preset) => (
-                <PresetCard
-                  key={preset.id}
-                  preset={preset}
-                  selected={selectedPresetId === preset.id}
-                  onClick={() => applyPreset(preset.id)}
-                />
-              ))}
-            </div>
-            <div className="mt-3 text-sm text-slate-700 dark:text-slate-300">
-              Preset: <span className="font-semibold text-slate-900 dark:text-slate-100">{selectedPreset ? selectedPreset.name : 'None'}</span>
-              {presetCustomized && <span className="ml-2 text-violet-600 dark:text-violet-400 font-semibold">· Customized</span>}
-            </div>
-          </section>
-
-          {/* D. Manual Selection Sections */}
+      <div className="flex-1 overflow-auto overflow-x-hidden px-2.5 md:px-4 pb-4">
+        <div className="max-w-3xl mx-auto space-y-5">
 
           {/* Play Type */}
-          <section className="pb-5 border-b border-slate-200 dark:border-slate-700">
-            <SectionHeader title="Play type" badge="Required" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <section className="pb-4 border-b border-slate-200 dark:border-slate-700">
+            <SectionHeader title="Play type" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {managedPlayTypes.map((item) => (
                 <Selector
                   key={item}
@@ -140,9 +110,9 @@ export default function LiveEntry() {
           </section>
 
           {/* Blitz */}
-          <section className="pb-5 border-b border-slate-200 dark:border-slate-700">
-            <SectionHeader title="Blitz" badge="Required" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">
+          <section className="pb-4 border-b border-slate-200 dark:border-slate-700">
+            <SectionHeader title="Blitz" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2.5">
               {managedBlitzes.map((item) => (
                 <Selector
                   key={item}
@@ -155,9 +125,9 @@ export default function LiveEntry() {
           </section>
 
           {/* Line Stunt */}
-          <section className="pb-5 border-b border-slate-200 dark:border-slate-700">
-            <SectionHeader title="Line stunt" badge="Required" />
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+          <section className="pb-4 border-b border-slate-200 dark:border-slate-700">
+            <SectionHeader title="Line stunt" />
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5">
               {managedStunts.map((item) => (
                 <Selector
                   key={item}
@@ -174,7 +144,7 @@ export default function LiveEntry() {
             <button
               type="button"
               onClick={() => setRecentOpen(!recentOpen)}
-              className="w-full flex items-center justify-between py-2 cursor-pointer"
+              className="w-full flex items-center justify-between py-1.5 cursor-pointer"
             >
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Recent plays</h3>

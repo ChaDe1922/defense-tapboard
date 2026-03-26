@@ -14,7 +14,8 @@ import { getOutcomeClassification as getFromLookups, DEFAULT_OUTCOME_CLASSIFICAT
 export const POSITIVE_OUTCOMES = new Set([
   'Tackle for loss',
   'Sack',
-  'Under',
+  'Under 5 yards',
+  'Under', // legacy
   'Turnover',
 ]);
 
@@ -31,6 +32,7 @@ export const NEUTRAL_OUTCOMES = new Set([
 export const NEGATIVE_OUTCOMES = new Set([
   'First down',
   'Over 10 yards gained',
+  'Touchdown',
 ]);
 
 /**

@@ -1,13 +1,15 @@
 export const positiveOutcomes = new Set([
   'Tackle for loss',
   'Sack',
-  'Under',
+  'Under 5 yards',
+  'Under', // legacy
   'Turnover',
 ]);
 
 export const negativeOutcomes = new Set([
   'First down',
   'Over 10 yards gained',
+  'Touchdown',
 ]);
 
 export function cn(...classes) {
@@ -15,7 +17,8 @@ export function cn(...classes) {
 }
 
 export function validateSelection(playType, blitz, stunt, outcome) {
-  return Boolean(playType && blitz && stunt && outcome);
+  const hasAtLeastOneCall = Boolean(playType || blitz || stunt);
+  return Boolean(hasAtLeastOneCall && outcome);
 }
 
 export function getOutcomeAccent(outcome, classification) {
@@ -24,8 +27,8 @@ export function getOutcomeAccent(outcome, classification) {
     if (classification === 'negative') return 'red';
     return 'amber';
   }
-  if (outcome === 'Turnover' || outcome === 'Sack' || outcome === 'Tackle for loss') return 'emerald';
-  if (outcome === 'First down' || outcome === 'Over 10 yards gained') return 'red';
+  if (positiveOutcomes.has(outcome)) return 'emerald';
+  if (negativeOutcomes.has(outcome)) return 'red';
   return 'amber';
 }
 
@@ -35,8 +38,8 @@ export function getOutcomeBadgeVariant(outcome, classification) {
     if (classification === 'negative') return 'danger';
     return 'warning';
   }
-  if (outcome === 'Turnover' || outcome === 'Sack' || outcome === 'Tackle for loss') return 'success';
-  if (outcome === 'First down' || outcome === 'Over 10 yards gained') return 'danger';
+  if (positiveOutcomes.has(outcome)) return 'success';
+  if (negativeOutcomes.has(outcome)) return 'danger';
   return 'warning';
 }
 

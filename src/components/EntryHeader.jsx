@@ -15,7 +15,7 @@ export default function EntryHeader() {
   const hasQueued = queuedPlayCount > 0;
 
   return (
-    <div className="sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 backdrop-blur px-4 md:px-6 pb-3 pt-4">
+    <div className="sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 backdrop-blur px-2.5 md:px-4 pb-2.5 pt-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center">
@@ -25,12 +25,12 @@ export default function EntryHeader() {
           </div>
           <div>
             <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Current game</div>
-            <div className="font-bold text-slate-900 dark:text-slate-100 text-base">{gameInfo.label}</div>
+            <div className="font-bold text-slate-900 dark:text-slate-100 text-lg">{gameInfo.label}</div>
           </div>
         </div>
         <div className="text-right">
           <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Play</div>
-          <div className="font-bold text-slate-900 dark:text-slate-100 text-base">#{playNumber}</div>
+          <div className="font-bold text-slate-900 dark:text-slate-100 text-lg">#{playNumber}</div>
         </div>
       </div>
 

@@ -54,7 +54,8 @@ export default function OutcomeSheet({ onClose }) {
     grouped[cls].push(outcome);
   });
 
-  const callSummary = `${selectedPlayType} · ${selectedBlitz} · ${selectedStunt}`;
+  const callParts = [selectedPlayType, selectedBlitz, selectedStunt].filter(Boolean);
+  const callSummary = callParts.length > 0 ? callParts.join(' · ') : 'No call selected';
 
   function handleSavePlay() {
     if (!selectedOutcome || saving) return;

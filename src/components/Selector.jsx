@@ -32,7 +32,7 @@ export default function Selector({ label, active, onClick, accent = 'slate' }) {
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        'rounded-xl px-4 py-3 min-h-[44px] text-sm md:text-base font-semibold transition-all duration-150 active:scale-[0.97] cursor-pointer',
+        'rounded-xl px-4 py-3.5 min-h-[48px] text-base md:text-lg font-semibold transition-all duration-150 active:scale-[0.97] cursor-pointer',
         active ? palette.active : palette.inactive
       )}
     >
